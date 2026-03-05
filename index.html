@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mary Chaker</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #0C0C0C;
+      --surface: #141414;
+      --border:  #242424;
+      --white:   #EFEFEF;
+      --dim:     #707070;
+      --dimmer:  #3A3A3A;
+      --accent:  #7EB3D8;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, transparent 50%, rgba(0,0,0,0.5) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .frame {
+      position: fixed;
+      inset: 32px;
+      border: 1px solid var(--border);
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      padding: 64px 80px;
+      position: relative;
+      z-index: 5;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      animation: up 0.9s cubic-bezier(0.22,1,0.36,1) 0.1s forwards;
+    }
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+      color: var(--white);
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 7px 14px 7px 10px;
+    }
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #7EB3D8;
+      box-shadow: 0 0 6px #7EB3D8;
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+    .status-badge span {
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .center {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 0 60px;
+      position: relative;
+    }
+    .eyebrow {
+      font-size: 0.62rem;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: up 0.8s ease 0.35s forwards;
+    }
+    .headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5.5vw, 6rem);
+      font-weight: 400;
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: up 1s cubic-bezier(0.22,1,0.36,1) 0.5s forwards;
+    }
+    .headline i {
+      font-style: italic;
+      color: var(--accent);
+    }
+    .rule {
+      width: 48px;
+      height: 1px;
+      background: var(--dimmer);
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: up 0.8s ease 0.75s forwards;
+    }
+    .body-text {
+      font-size: 0.9rem;
+      line-height: 1.85;
+      color: var(--dim);
+      max-width: 400px;
+      margin-bottom: 56px;
+      font-weight: 300;
+      opacity: 0;
+      animation: up 0.8s ease 0.9s forwards;
+    }
+    .cta-group {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      opacity: 0;
+      animation: up 0.8s ease 1.05s forwards;
+    }
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--bg);
+      background: var(--white);
+      font-size: 0.68rem;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 15px 28px;
+      transition: background 0.3s ease, color 0.3s ease, gap 0.3s ease;
+    }
+    .cta-btn:hover { background: var(--accent); gap: 18px; }
+    .cta-btn svg { width: 12px; height: 12px; transition: transform 0.3s ease; }
+    .cta-btn:hover svg { transform: translateX(3px); }
+    .cta-sub {
+      font-size: 0.62rem;
+      letter-spacing: 0.12em;
+      color: var(--dimmer);
+      text-transform: uppercase;
+    }
+
+    .bg-num {
+      position: absolute;
+      right: -10px;
+      bottom: 20px;
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(200px, 30vw, 400px);
+      font-weight: 700;
+      color: rgba(255,255,255,0.025);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.05em;
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 36px;
+      border-top: 1px solid var(--border);
+      opacity: 0;
+      animation: up 0.8s ease 1.2s forwards;
+    }
+    .footer-left {
+      display: flex;
+      gap: 48px;
+    }
+    .f-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .f-label {
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dimmer);
+    }
+    .f-value {
+      font-size: 0.72rem;
+      color: var(--dim);
+      letter-spacing: 0.02em;
+    }
+    .f-value a {
+      color: var(--dim);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .f-value a:hover { color: var(--accent); }
+
+    .icon-links {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .icon-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dimmer);
+      text-decoration: none;
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+    .icon-link:hover { color: var(--accent); transform: translateY(-2px); }
+    .icon-link svg { width: 22px; height: 22px; }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .side-label {
+      position: fixed;
+      right: 46px;
+      top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      transform-origin: center center;
+      font-size: 0.55rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--dimmer);
+      white-space: nowrap;
+      z-index: 10;
+      opacity: 0;
+      animation: fadein 1.5s ease 1.4s forwards;
+    }
+
+    @keyframes up {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadein { to { opacity: 1; } }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.35; }
+    }
+
+    @media (max-width: 680px) {
+      .page  { padding: 52px 30px 40px; }
+      .frame { inset: 16px; }
+      .side-label { display: none; }
+      .bg-num { display: none; }
+      .footer-left { flex-direction: column; gap: 18px; }
+      footer { flex-direction: column; align-items: flex-start; gap: 20px; }
+      .header-right .nav-label { display: none; }
+    }
+    /* Custom cursor */
+    * { cursor: none !important; }
+
+    .cursor-dot {
+      position: fixed;
+      width: 5px; height: 5px;
+      background: var(--white);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+
+    .cursor-trail {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: transparent;
+      border: 1px solid rgba(126,179,216,0.6);
+      transition: width 0.4s ease, height 0.4s ease, border-color 0.4s ease, opacity 0.4s ease;
+    }
+
+    .cursor-dot.clicking {
+      transform: translate(-50%, -50%) scale(0.4);
+      background: var(--accent);
+    }
+    .cursor-dot.hovering {
+      transform: translate(-50%, -50%) scale(0);
+    }
+    .cursor-trail.hovering {
+      border-color: var(--accent);
+    }
+
+    /* Magnetic text label on cursor */
+    .cursor-label {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      font-size: 0.55rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.25s ease;
+    }
+    .cursor-label.visible { opacity: 1; }
+
+  </style>
+</head>
+<body>
+
+  <main class="page">
+
+    <header>
+      <div class="logo">Your Name</div>
+      <div class="header-right">
+        <div class="status-badge">
+          <span class="dot"></span>
+          <span>Redesign in progress</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="center">
+
+      <p class="eyebrow">Nothing to see here. Well, almost nothing.</p>
+
+      <h1 class="headline">
+        Good things<br>
+        take time.<br>
+        <i>This is one of<br>those things.</i>
+      </h1>
+
+      <div class="rule"></div>
+
+      <p class="body-text">
+        My website is having a moment. The portfolio, however, is looking great
+        and would love the attention. Go ahead.
+      </p>
+
+      <div class="cta-group">
+        <a href="https://drive.google.com/file/d/1FNjf_seBw05gYhwzPZn51O4WUo9-git5/view?usp=drivesdk" class="cta-btn" target="_blank">
+          Take a look
+          <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 6h10M6 1l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="footer-left">
+        <div class="f-item">
+          <span class="f-label">Availability</span>
+          <span class="f-value">Very much open</span>
+        </div>
+      </div>
+      <div class="footer-right">
+        <div class="icon-links">
+          <!-- Email -->
+          <a href="mailto:mariam.mchaker1@gmail.com" class="icon-link" title="Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M2 7l10 7 10-7"/>
+            </svg>
+          </a>
+          <!-- LinkedIn -->
+          <a href="https://www.linkedin.com/in/marychaker" target="_blank" class="icon-link" title="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+            </svg>
+          </a>
+          <!-- Behance -->
+          <a href="https://www.behance.net/maryChaker" target="_blank" class="icon-link" title="Behance">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M22 7h-7V5h7v2zm1.726 10c-.442 1.297-2.029 3-5.101 3-3.074 0-5.564-1.729-5.564-5.675 0-3.91 2.325-5.92 5.466-5.92 3.082 0 4.964 1.782 5.375 4.426.078.506.109 1.188.095 2.14H15.97c.13 1.2.836 1.884 2.109 1.884.63 0 1.109-.157 1.384-.657h2.363l-.1.802zM15.973 12.6h3.636c-.104-1.197-.78-1.86-1.791-1.86-1.067 0-1.693.663-1.845 1.86zM8.777 11.73c1.028-.363 1.552-1.164 1.552-2.223 0-2.148-1.534-3.097-3.637-3.097H0V19h6.968c2.565 0 4.207-1.096 4.207-3.568 0-1.39-.63-2.75-2.398-3.102zM3 8.735h2.812c.812 0 1.534.293 1.534 1.248 0 .904-.625 1.248-1.534 1.248H3V8.735zm3.181 7.102H3v-2.734h3.181c1.009 0 1.742.41 1.742 1.367 0 .957-.733 1.367-1.742 1.367z"/>
+            </svg>
+          </a>
+        </div>
+        <span style="font-family:'Playfair Display',serif; font-style:italic; font-size:0.8rem; color:var(--dimmer);">© 2026</span>
+      </div>
+    </footer>
+
+  </main>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-trail" id="cursorTrail" style="width:40px;height:40px;"></div>
+  <div class="cursor-label" id="cursorLabel"></div>
+
+<script>
+    const dot      = document.getElementById('cursorDot');
+    const trail    = document.getElementById('cursorTrail');
+    const label    = document.getElementById('cursorLabel');
+
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let trailX = mouseX, trailY = mouseY;
+    let labelX = mouseX, labelY = mouseY;
+
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      dot.style.left = mouseX + 'px';
+      dot.style.top  = mouseY + 'px';
+    });
+
+    // Smooth trailing ring
+    function animate() {
+      trailX += (mouseX - trailX) * 0.1;
+      trailY += (mouseY - trailY) * 0.1;
+      trail.style.left = trailX + 'px';
+      trail.style.top  = trailY + 'px';
+
+      labelX += (mouseX - labelX) * 0.1;
+      labelY += (mouseY - labelY) * 0.1;
+      label.style.left = (labelX + 28) + 'px';
+      label.style.top  = (labelY - 28) + 'px';
+
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Click effect
+    document.addEventListener('mousedown', () => dot.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => dot.classList.remove('clicking'));
+
+    // Hover effects per element type
+    const hoverMap = [
+      { selector: '.cta-btn',   size: 80,  text: 'Open' },
+      { selector: '.icon-link', size: 60,  text: '' },
+      { selector: '.logo',      size: 60,  text: '' },
+    ];
+
+    hoverMap.forEach(({ selector, size, text }) => {
+      document.querySelectorAll(selector).forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          trail.style.width  = size + 'px';
+          trail.style.height = size + 'px';
+          trail.classList.add('hovering');
+          dot.classList.add('hovering');
+          if (text) {
+            label.textContent = text;
+            label.classList.add('visible');
+          }
+        });
+        el.addEventListener('mouseleave', () => {
+          trail.style.width  = '40px';
+          trail.style.height = '40px';
+          trail.classList.remove('hovering');
